@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>PBT205 — Assessment 1 Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── HEADER ── */
+        header {
+            background: #1e293b;
+            border-bottom: 1px solid #334155;
+            padding: 20px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .header-left h1 {
+            font-size: 20px;
+            font-weight: bold;
+            color: #f8fafc;
+        }
+
+        .header-left p {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .header-right {
+            font-size: 12px;
+            color: #475569;
+            text-align: right;
+        }
+
+        /* ── MAIN GRID ── */
+        main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            padding: 32px;
+        }
+
+        /* ── TASK CARD ── */
+        .card {
+            background: #1e293b;
+            border-radius: 16px;
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            border-color: #38bdf8;
+            box-shadow: 0 0 24px rgba(56, 189, 248, 0.08);
+        }
+
+        .card-header {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .task-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .card-header h2 {
+            font-size: 18px;
+            font-weight: bold;
+            color: #f8fafc;
+        }
+
+        .card-header p {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 4px;
+            line-height: 1.5;
+        }
+
+        /* ── STATUS ── */
+        .status-row {
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #334155;
+            background: #162032;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ef4444;
+            flex-shrink: 0;
+            transition: background 0.3s;
+        }
+
+        .dot.up { background: #22c55e; }
+        .dot.checking { background: #f59e0b; }
+
+        .status-text {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .port-label {
+            margin-left: auto;
+            font-size: 11px;
+            color: #475569;
+            font-family: monospace;
+        }
+
+        /* ── TECH TAGS ── */
+        .tags {
+            padding: 12px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .tag {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: #0f172a;
+            color: #94a3b8;
+            border: 1px solid #334155;
+        }
+
+        /* ── LAUNCH BUTTON ── */
+        .card-footer {
+            padding: 16px 24px;
+            margin-top: auto;
+        }
+
+        .launch-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #38bdf8;
+            color: #0f172a;
+            font-weight: bold;
+            font-size: 14px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .launch-btn:hover { background: #7dd3fc; }
+
+        .launch-btn.disabled {
+            background: #1e293b;
+            color: #475569;
+            border: 1px solid #334155;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: #1e293b;
+            border-top: 1px solid #334155;
+            padding: 14px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #475569;
+            flex-shrink: 0;
+        }
+
+        footer span { color: #64748b; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            main { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-left">
+        <h1>PBT205 — Assessment 1</h1>
+        <p>Prototype Development · Group 3 · Torrens University Australia</p>
+    </div>
+    <div class="header-right">
+        <div>Tia Darvell · David Ristevski · Nicholas Beltran</div>
+        <div style="margin-top:4px;">RabbitMQ Middleware · C# .NET 10 · Docker</div>
+    </div>
+</header>
+
+<main>
+
+    <!-- TASK 1 -->
+    <div class="card">
+        <div class="card-header">
+            <div class="task-label">Task 1</div>
+            <h2>Chat Application</h2>
+            <p>Multi-room chat over RabbitMQ topic exchange. Multiple users can join rooms and send messages in real time.</p>
+        </div>
+        <div class="status-row">
+            <div class="dot checking" id="dot-1"></div>
+            <span class="status-text" id="status-1">Checking...</span>
+            <span class="port-label">:5001</span>
+        </div>
+        <div class="tags">
+            <span class="tag">RabbitMQ Topic Exchange</span>
+            <span class="tag">MassTransit</span>
+            <span class="tag">SignalR</span>
+            <span class="tag">Multi-room</span>
+        </div>
+        <div class="card-footer">
+            <a href="http://localhost:5001" target="_blank" class="launch-btn" id="btn-1">
+                Open Chat GUI →
+            </a>
+        </div>
+    </div>
+
+    <!-- TASK 2 -->
+    <div class="card">
+        <div class="card-header">
+            <div class="task-label">Task 2</div>
+            <h2>XYZ Exchange</h2>
+            <p>Stock trading system for XYZ Corp. Traders submit buy/sell orders; the exchange matches them and publishes completed trades.</p>
+        </div>
+        <div class="status-row">
+            <div class="dot checking" id="dot-2"></div>
+            <span class="status-text" id="status-2">Checking...</span>
+            <span class="port-label">:5219</span>
+        </div>
+        <div class="tags">
+            <span class="tag">RabbitMQ Fanout Exchange</span>
+            <span class="tag">Order Book</span>
+            <span class="tag">SignalR</span>
+            <span class="tag">Live Price Feed</span>
+        </div>
+        <div class="card-footer">
+            <a href="http://localhost:5219" target="_blank" class="launch-btn" id="btn-2">
+                Open Trading GUI →
+            </a>
+        </div>
+    </div>
+
+    <!-- TASK 3 -->
+    <div class="card">
+        <div class="card-header">
+            <div class="task-label">Task 3</div>
+            <h2>Contact Tracing</h2>
+            <p>People move randomly on a 10×10 grid. The tracker logs contacts when two people share a square and responds to identity queries.</p>
+        </div>
+        <div class="status-row">
+            <div class="dot checking" id="dot-3"></div>
+            <span class="status-text" id="status-3">Checking...</span>
+            <span class="port-label">:5220</span>
+        </div>
+        <div class="tags">
+            <span class="tag">RabbitMQ Fanout Exchange</span>
+            <span class="tag">Grid Environment</span>
+            <span class="tag">SignalR</span>
+            <span class="tag">Contact Query</span>
+        </div>
+        <div class="card-footer">
+            <a href="http://localhost:5220" target="_blank" class="launch-btn" id="btn-3">
+                Open Tracing GUI →
+            </a>
+        </div>
+    </div>
+
+</main>
+
+<footer>
+    <span>PBT205 Assessment 1 · Submitted 29 March 2026</span>
+    <span>Start all services before launching · RabbitMQ on :5672 · Management UI on :15672</span>
+</footer>
+
+<script>
+    // Poll each GUI to show live up/down status
+    const services = [
+        { id: 1, url: "http://localhost:5001" },
+        { id: 2, url: "http://localhost:5219" },
+        { id: 3, url: "http://localhost:5220" },
+    ];
+
+    async function checkService(service) {
+        const dot    = document.getElementById(`dot-${service.id}`);
+        const status = document.getElementById(`status-${service.id}`);
+
+        try {
+            // Fetch with a short timeout — just checking reachability
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 3000);
+
+            await fetch(service.url, {
+                mode: "no-cors",
+                signal: controller.signal
+            });
+
+            clearTimeout(timer);
+
+            dot.className = "dot up";
+            status.textContent = "Running";
+        } catch {
+            dot.className = "dot";
+            status.textContent = "Not running";
+        }
+    }
+
+    function checkAll() {
+        services.forEach(checkService);
+    }
+
+    // Check on load and every 10 seconds
+    checkAll();
+    setInterval(checkAll, 10000);
+</script>
+
+</body>
+</html>

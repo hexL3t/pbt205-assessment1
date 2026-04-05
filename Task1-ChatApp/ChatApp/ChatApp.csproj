@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- 
+    Changed from Microsoft.NET.Sdk.Web to Microsoft.NET.Sdk
+    because this is a Console app, not a web API.
+    The chat app runs in the terminal, not a browser.
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!-- Makes this a runnable console application -->
+    
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Using .NET 10 (Latest LTS) -->
+    
+    <Nullable>enable</Nullable>
+    <!-- Enables nullable reference types to avoid null errors -->
+    
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Automatically includes common using statements like System, etc -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- MassTransit handles RabbitMQ messaging for us -->
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.3.6" />
+  </ItemGroup>
+
+</Project>

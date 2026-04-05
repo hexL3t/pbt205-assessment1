@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Contact Tracer – Live Grid</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #0f172a;
+            color: #f8fafc;
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 32px;
+        }
+
+        .layout {
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        /* ── Grid Panel ── */
+        .card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+
+        #grid-container {
+            display: grid;
+            gap: 2px;
+        }
+
+        .cell {
+            width: 48px;
+            height: 48px;
+            background: #334155;
+            border-radius: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            font-size: 11px;
+            font-weight: bold;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        .cell.contact {
+            background: #7c3aed;
+        }
+
+        .person-badge {
+            background: #38bdf8;
+            color: #0f172a;
+            border-radius: 4px;
+            padding: 1px 4px;
+            font-size: 10px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .person-badge.contact-badge {
+            background: #f472b6;
+        }
+
+        /* ── Side Panel ── */
+        .side-panel {
+            flex: 1;
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 20px;
+            margin-bottom: 14px;
+        }
+
+        .status {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+
+        /* ── People List ── */
+        .person-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            background: #334155;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #38bdf8;
+            flex-shrink: 0;
+        }
+
+        .coords {
+            margin-left: auto;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        /* ── Query ── */
+        .query-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: #f8fafc;
+            font-size: 15px;
+        }
+
+        button {
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: none;
+            background: #38bdf8;
+            color: #0f172a;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover { background: #7dd3fc; }
+
+        /* ── Contact Results ── */
+        .contact-item {
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #334155;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .contact-time {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .no-results {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* ── Legend ── */
+        .legend {
+            display: flex;
+            gap: 16px;
+            margin-top: 14px;
+            font-size: 13px;
+            color: #94a3b8;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Contact Tracer – Live Environment</h1>
+
+    <div class="layout">
+
+        <!-- Grid -->
+        <div class="card">
+            <h2>Live Grid</h2>
+            <div id="grid-container"></div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:#38bdf8"></div> Person
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:#f472b6"></div> Contact event
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:#7c3aed"></div> Shared square
+                </div>
+            </div>
+            <div class="status" id="grid-status">Connecting...</div>
+        </div>
+
+        <!-- Side Panel -->
+        <div class="side-panel">
+
+            <!-- People positions -->
+            <div class="card">
+                <h2>Current Positions</h2>
+                <div id="people-list"></div>
+            </div>
+
+            <!-- Query -->
+            <div class="card">
+                <h2>Contact History Query</h2>
+                <div class="query-row">
+                    <input type="text" id="query-input" placeholder="Enter person name..." />
+                    <button onclick="runQuery()">Query</button>
+                </div>
+                <div id="query-results" style="margin-top: 14px;"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+    <script>
+        let boardSize = 10;
+        let currentPositions = [];
+
+        const gridContainer = document.getElementById("grid-container");
+        const peopleList = document.getElementById("people-list");
+        const gridStatus = document.getElementById("grid-status");
+        const queryResults = document.getElementById("query-results");
+
+        // ── Build grid ──
+        function buildGrid(size) {
+            boardSize = size;
+            gridContainer.style.gridTemplateColumns = `repeat(${size}, 48px)`;
+            gridContainer.innerHTML = "";
+            for (let y = 0; y < size; y++) {
+                for (let x = 0; x < size; x++) {
+                    const cell = document.createElement("div");
+                    cell.className = "cell";
+                    cell.id = `cell-${x}-${y}`;
+                    cell.title = `(${x}, ${y})`;
+                    gridContainer.appendChild(cell);
+                }
+            }
+        }
+
+        // ── Update grid with new positions ──
+        function updateGrid(positions) {
+            // Clear all cells
+            document.querySelectorAll(".cell").forEach(c => {
+                c.innerHTML = "";
+                c.classList.remove("contact");
+            });
+
+            // Group by position
+            const byPos = {};
+            positions.forEach(p => {
+                const key = `${p.x}-${p.y}`;
+                if (!byPos[key]) byPos[key] = [];
+                byPos[key].push(p.name);
+            });
+
+            // Render
+            Object.entries(byPos).forEach(([key, names]) => {
+                const cell = document.getElementById(`cell-${key}`);
+                if (!cell) return;
+                const isContact = names.length > 1;
+                if (isContact) cell.classList.add("contact");
+                names.forEach(name => {
+                    const badge = document.createElement("span");
+                    badge.className = isContact ? "person-badge contact-badge" : "person-badge";
+                    badge.textContent = name.substring(0, 3);
+                    badge.title = name;
+                    cell.appendChild(badge);
+                });
+            });
+
+            // Update people list
+            peopleList.innerHTML = "";
+            positions.forEach(p => {
+                const row = document.createElement("div");
+                row.className = "person-row";
+                row.innerHTML = `
+                    <div class="dot"></div>
+                    <span>${p.name}</span>
+                    <span class="coords">(${p.x}, ${p.y})</span>
+                `;
+                peopleList.appendChild(row);
+            });
+        }
+
+        // ── Query contact history ──
+        async function runQuery() {
+            const name = document.getElementById("query-input").value.trim();
+            if (!name) return;
+
+            queryResults.innerHTML = `<div class="no-results">Querying contacts for <strong>${name}</strong>...</div>`;
+
+            try {
+                const response = await fetch(`/api/query/${encodeURIComponent(name)}`);
+                const contacts = await response.json();
+
+                if (contacts.length === 0) {
+                    queryResults.innerHTML = `<div class="no-results">No contacts found for <strong>${name}</strong>.</div>`;
+                    return;
+                }
+
+                queryResults.innerHTML = `<div style="margin-bottom:10px; font-size:14px;">
+                    Contact history for <strong>${name}</strong> — ${contacts.length} event(s), most recent first:
+                </div>`;
+
+                contacts.forEach(c => {
+                    const other = c.person1 === name ? c.person2 : c.person1;
+                    const item = document.createElement("div");
+                    item.className = "contact-item";
+                    item.innerHTML = `
+                        <div>Contact with <strong>${other}</strong> at (${c.x}, ${c.y})</div>
+                        <div class="contact-time">${new Date(c.timestamp).toLocaleTimeString()}</div>
+                    `;
+                    queryResults.appendChild(item);
+                });
+
+            } catch (err) {
+                queryResults.innerHTML = `<div class="no-results">Query failed. Is the server running?</div>`;
+            }
+        }
+
+        // Allow Enter key to trigger query
+        document.getElementById("query-input").addEventListener("keydown", e => {
+            if (e.key === "Enter") runQuery();
+        });
+
+        // ── SignalR connection ──
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/trackerhub")
+            .build();
+
+        connection.on("ReceivePositions", function (positions, size) {
+            if (document.querySelectorAll(".cell").length !== size * size) {
+                buildGrid(size);
+            }
+            currentPositions = positions;
+            updateGrid(positions);
+            gridStatus.textContent = `Live — last updated ${new Date().toLocaleTimeString()}`;
+        });
+
+        connection.start()
+            .then(() => {
+                gridStatus.textContent = "Connected. Waiting for position data...";
+                buildGrid(boardSize);
+            })
+            .catch(err => {
+                console.error(err);
+                gridStatus.textContent = "Connection failed. Is the server running?";
+            });
+    </script>
+</body>
+</html>

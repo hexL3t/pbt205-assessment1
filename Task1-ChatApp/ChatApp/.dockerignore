@@ -1,0 +1,23 @@
+# Ignore build outputs
+bin/
+obj/
+*.dll
+*.exe
+
+# Ignore packages
+packages/
+.packages/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local environment
+.env
+.env.local
