@@ -8,6 +8,16 @@
 
 ---
 
+## Live Dashboard
+
+**[https://pbt205-assessment1-group3.netlify.app](https://pbt205-assessment1-group3.netlify.app)**
+
+The dashboard provides an overview of all three prototypes with launch buttons for each GUI. Status indicators show green when the local GUIs are running. Start all three GUIs locally first, then visit the dashboard to launch each one.
+
+**GitHub Repository:** [https://github.com/hexL3t/pbt205-assessment1](https://github.com/hexL3t/pbt205-assessment1)
+
+---
+
 ## Overview
 
 Three distributed software prototypes communicating via RabbitMQ middleware. Each prototype is a set of command-line applications and a real-time web GUI, built with C# .NET 10, SignalR, MassTransit, and Docker. A single RabbitMQ instance is shared across all three tasks.
@@ -23,7 +33,7 @@ Three distributed software prototypes communicating via RabbitMQ middleware. Eac
 ## Project Structure
 
 ```
-pbt205-Group3-Assessment1/
+pbt205-assessment1/
 │
 ├── Task1-ChatApp/
 │   ├── ChatApp/                  # CLI — multi-room chat client
@@ -50,7 +60,7 @@ pbt205-Group3-Assessment1/
 │   ├── QueryApp/                 # CLI — queries contacts, prints and exits
 │   └── ContactTracerGui/         # ASP.NET Core + SignalR web GUI
 │
-├── dashboard.html                # Local dashboard linking all three GUIs
+├── index.html                    # Dashboard (live at Netlify URL above)
 ├── docker-compose.yml            # Shared RabbitMQ instance
 └── README.md
 ```
@@ -70,8 +80,8 @@ pbt205-Group3-Assessment1/
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
-cd pbt205-Group3-Assessment1
+git clone https://github.com/hexL3t/pbt205-assessment1.git
+cd pbt205-assessment1
 ```
 
 ### 2. Start RabbitMQ
@@ -87,11 +97,10 @@ Login: `guest` / `guest`
 
 ### 3. Open the Dashboard
 
-Once all three GUIs are running (see below), open the dashboard to access all three from one place:
+Once all three GUIs are running, open the dashboard:
 
-```bash
-open dashboard.html
-```
+- **Live:** [https://pbt205-assessment1-group3.netlify.app](https://pbt205-assessment1-group3.netlify.app)
+- **Local:** Open `index.html` directly in your browser
 
 ---
 
@@ -126,8 +135,6 @@ dotnet run --project Task1-ChatApp/ChatApp -- David localhost general
 ```
 
 **Available rooms:** `general` · `sports` · `lobby`
-
-Messages appear in real time in the GUI and in all other CLI terminals in the same room.
 
 ---
 
@@ -166,9 +173,7 @@ dotnet run --project Task2-XYZExchange/SendOrderApp -- Alice localhost BUY 100 1
 dotnet run --project Task2-XYZExchange/SendOrderApp -- Bob localhost SELL 100 10.50
 ```
 
-The exchange matches the orders and publishes the completed trade. The GUI updates in real time showing the latest price, buyer, seller, quantity, and trade history.
-
-> Quantity is fixed at 100 shares per the assessment specification. A BUY and SELL order match when the buyer's price is greater than or equal to the seller's price.
+> Quantity is fixed at 100 shares per the assessment specification.
 
 ---
 
@@ -202,28 +207,18 @@ Open [http://localhost:5220](http://localhost:5220)
 dotnet run --project Task3-ContactTracing/PersonApp -- <endpoint> <name> <moves-per-second>
 ```
 
-**Example — two people on the board:**
+**Example:**
 ```bash
-# Terminal 1
 dotnet run --project Task3-ContactTracing/PersonApp -- localhost Alice 1
-
-# Terminal 2
 dotnet run --project Task3-ContactTracing/PersonApp -- localhost Bob 1
 ```
 
 ### Query Contacts
 ```bash
-dotnet run --project Task3-ContactTracing/QueryApp -- <endpoint> <name>
-```
-
-**Example:**
-```bash
 dotnet run --project Task3-ContactTracing/QueryApp -- localhost Alice
 ```
 
-Returns all people Alice has contacted, in reverse-chronological order. Results appear in both the terminal and the GUI.
-
-> Default board size is 10×10. Configurable up to 1000×1000 via the optional 4th argument to PersonApp: `PersonApp localhost Alice 1 50`
+> Default board size is 10×10. Configurable up to 1000×1000 via optional 4th argument: `PersonApp localhost Alice 1 50`
 
 ---
 
@@ -246,20 +241,19 @@ Returns all people Alice has contacted, in reverse-chronological order. Results 
 
 | # | Assumption | Reason |
 |---|------------|--------|
-| 1 | A demonstration video is required for each task | Advised verbally during class; not in the written brief |
-| 2 | Each video is a screen-recorded walkthrough covering all CLI and HD GUI requirements | No format guidance provided |
-| 3 | Quantity is fixed at 100 shares per order for Task 2 | Specified in the brief |
-| 4 | Person identifiers in Task 3 are unique first names | Permitted by the brief for simplicity |
-| 5 | Movement speed in Task 3 is expressed as moves per second | Brief left format to team's discretion |
+| 1 | Each video is a screen-recorded walkthrough covering all CLI and HD GUI requirements | No format guidance provided |
+| 2 | Quantity is fixed at 100 shares per order for Task 2 | Specified in the brief |
+| 3 | Person identifiers in Task 3 are unique first names | Permitted by the brief for simplicity |
+| 4 | Movement speed in Task 3 is expressed as moves per second | Brief left format to team's discretion |
 
 ---
 
 ## Known Limitations
 
-- **Task 2:** If multiple ExchangeApp instances are started, each will receive every order and attempt to match independently, resulting in duplicate trades. The spec states there can only be one exchange.
+- **Task 2:** Multiple ExchangeApp instances will each receive every order and match independently, causing duplicate trades. Only one instance should run at a time.
 - **Task 2:** Subscriber queues are exclusive and auto-delete — orders published while ExchangeApp is not running are lost.
-- **Task 3:** Board rendering in the GUI is optimised for 10×10. Very large boards would require a pan/zoom system.
-- **Dashboard:** Status indicators poll localhost ports and only work when all three GUIs are running on the same machine.
+- **Task 3:** Board rendering is optimised for 10×10. Very large boards would require a pan/zoom system.
+- **Dashboard:** Status indicators poll localhost ports and only show green when all three GUIs are running locally. The Netlify dashboard shows the project overview regardless.
 
 ---
 
